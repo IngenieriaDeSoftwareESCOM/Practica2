@@ -12,25 +12,31 @@ public class Role {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long _id;
+    private Long id;
 
-    private String _name;
-    private Long _userId;
+    private String name;
+    private Long userid;
 
     // Getters and Setters
     public Long getId() {
-        return _id;
+        return id;
     }
 
     public void setId(Long id) {
-        this._id = id;
+        this.id = id;
     }
 
     public String getName() {
-        return _name;
+        return name;
     }
 
     public void setName(String name) {
-        this._name = name;
+        this.name = name;
+    }
+    public Long getUserId(){
+        return userid;
+    }
+    public void setUserId(Long userid){
+        this.userid = userid;
     }
 }

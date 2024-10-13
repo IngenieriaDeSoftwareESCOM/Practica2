@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-configuration PUBLIC "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+        "http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
+<hibernate-configuration>
+    <session-factory>
+        <!-- Database connection settings -->
+        <property name="hibernate.dialect">org.hibernate.dialect.MySQL8Dialect</property>
+        <property name="hibernate.connection.driver_class">com.mariadb.cj.jdbc.Driver</property>
+        <property name="hibernate.connection.url">jdbc:mariadb://localhost:3306/P2</property>
+        <property name="hibernate.connection.username">p2</property>
+        <property name="hibernate.connection.password">1234</property>
+
+        <!-- JDBC connection pool settings -->
+        <property name="hibernate.c3p0.min_size">5</property>
+        <property name="hibernate.c3p0.max_size">20</property>
+
+        <!-- Enable Hibernate's automatic session context management -->
+        <property name="hibernate.current_session_context_class">thread</property>
+
+        <!-- Echo all executed SQL to stdout -->
+        <property name="hibernate.show_sql">true</property>
+        <property name="hibernate.format_sql">true</property>
+
+        <!-- Automatically drop and re-create the database schema on startup -->
+        <property name="hibernate.hbm2ddl.auto">update</property>
+    </session-factory>
+</hibernate-configuration>

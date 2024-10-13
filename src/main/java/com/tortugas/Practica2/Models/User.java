@@ -4,7 +4,10 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Column;
+
 import jakarta.persistence.Table;
+import com.tortugas.Practica2.Repositories.*;
 
 @Entity
 @Table(name = "Users")
@@ -12,34 +15,46 @@ public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long _id;
-
-    private String _name;
-    private String _email;
-    private String _password;
+    private Long id;
+    @Column(name = "name")
+    private String name;
+    @Column(name = "email")
+    private String email;
+    @Column(name = "password")
+    private String password;
 
     // Getters and Setters
     public Long getId() {
-        return _id;
+        return id;
     }
 
     public void setId(Long id) {
-        this._id = id;
+        this.id = id;
     }
 
     public String getName() {
-        return _name;
+        return name;
     }
 
     public void setName(String name) {
-        this._name = name;
+        this.name = name;
     }
 
     public String getEmail() {
-        return _email;
+        return email;
     }
 
     public void setEmail(String email) {
-        this._email = email;
+        this.email = email;
+    }
+
+    public void setPassword(String password){
+        PasswordHasher hasher = new PasswordHasher();
+        String hash = hasher.getHash(password);
+        this.password = hash;
+    }
+
+    public String getPassword(){
+        return this.password;
     }
 }
