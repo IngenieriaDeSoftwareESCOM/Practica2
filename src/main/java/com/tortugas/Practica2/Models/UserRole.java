@@ -10,14 +10,20 @@ import jakarta.persistence.JoinColumn;
 import com.tortugas.Practica2.Models.*;
 
 @Entity
-@Table(name = "Roles")
-public class Role {
+@Table(name = "UserRoles")
+public class UserRole {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String name;
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+    
+    @ManyToOne
+    @JoinColumn(name = "role_id")
+    private Role role;
 
     // Getters and Setters
     public Long getId() {
@@ -28,11 +34,19 @@ public class Role {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public User getUser(){
+        return this.user;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setUser(User user){
+        this.user = user;
+    }
+
+    public void setRole(Role role){
+        this.role = role;
+    }
+    
+    public Role getRole(){
+        return this.role;
     }
 }

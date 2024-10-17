@@ -107,5 +107,15 @@ public class AuthController {
         }
         return ResponseEntity.ok(newToken);
     }
-    
+    @GetMapping("api/Test/Token")
+    public ResponseEntity testToken(@RequestHeader("Authorization") String token) {
+        try{
+            if(!_cacheService.isKeyInCache(token.replace("Bearer ", ""))){
+                return ResponseEntity.status(401).build();
+            }
+            return ResponseEntity.ok().build();
+        }catch(Exception ex){
+            return ResponseEntity.internalServerError().build();
+        }
+    }
 }
