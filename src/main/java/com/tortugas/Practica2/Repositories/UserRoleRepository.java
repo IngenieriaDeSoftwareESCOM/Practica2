@@ -12,7 +12,6 @@ import java.util.List;
 import java.util.Optional;
 @Repository
 public interface UserRoleRepository extends JpaRepository<UserRole, Long> {
-    // You can define custom query methods here if needed
     @Transactional
     @Query(value = "DELETE FROM user_roles WHERE user_id = :user_id AND role_id = :role_id", nativeQuery = true)
     void removeRoleByUserId(Long user_id, Long role_id);

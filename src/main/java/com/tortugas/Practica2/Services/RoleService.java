@@ -1,7 +1,7 @@
 package com.tortugas.Practica2.Services;
 
-import com.tortugas.Practica2.Models.*;
-import com.tortugas.Practica2.Repositories.*;
+import com.tortugas.Practica2.Models.UserRole;
+import com.tortugas.Practica2.Repositories.UserRoleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -9,24 +9,33 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class RoleService {
+public class UserRoleService {
 
     @Autowired
-    private RoleRepository roleRepository;
+    private UserRoleRepository userRoleRepository;
 
-    public List<Role> getAllRoles() {
-        return roleRepository.findAll();
+    // Method to get all UserRole entries from the repository
+    public List<UserRole> getAll() {
+        return userRoleRepository.findAll();
     }
 
-    public Optional<Role> getRoleById(Long id) {
-        return roleRepository.findById(id);
+    // Method to get all UserRole entries for a specific user
+    public List<UserRole> getUserRoles(Long userId) {
+        return userRoleRepository.findByUserId(userId);
     }
 
-    public Role createRole(Role Role) {
-        return roleRepository.save(Role);
+    // Method to get a specific UserRole by its ID
+    public Optional<UserRole> getUserRoleById(Long id) {
+        return userRoleRepository.findById(id);
     }
 
-    public void deleteRole(Long id) {
-        roleRepository.deleteById(id);
+    // Method to create a new UserRole
+    public UserRole createUserRole(UserRole userRole) {
+        return userRoleRepository.save(userRole);
+    }
+
+    // Method to delete a UserRole by its ID
+    public void deleteById(Long id) {
+        userRoleRepository.deleteById(id);
     }
 }
