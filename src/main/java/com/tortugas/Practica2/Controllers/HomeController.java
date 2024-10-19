@@ -36,7 +36,7 @@ public class HomeController {
 
     // Constructor injection of UserService
     public HomeController(UserService service){
-        _service = service;
+        _userService = service;
     }
 
     // Mapping to return the "index" view
