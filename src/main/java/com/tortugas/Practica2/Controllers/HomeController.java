@@ -18,6 +18,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import jakarta.servlet.http.HttpServletRequest;
+
+
+
 import java.util.List;
 
 // The HomeController class is annotated as a controller that handles HTTP requests
@@ -35,8 +39,10 @@ public class HomeController {
     private CacheService _cacheService;
 
     // Constructor injection of UserService
-    public HomeController(UserService service){
+    public HomeController(UserService service, RoleService roleService, UserRoleService userRoleService){
         _userService = service;
+        _roleService = roleService;
+        _userRoleService = userRoleService;
     }
 
     // Mapping to return the "index" view
@@ -53,19 +59,65 @@ public class HomeController {
 
     // Mapping to return the "users" view
     @GetMapping("/users")
-    public String users() {
-        return "users"; // Returns the "users" HTML view
+    public String users(HttpServletRequest request) {
+        String ipAddress = request.getRemoteAddr();
+        String proxyIpAddress = request.getHeader("X-Forwarded-For");
+        if (proxyIpAddress != null) {
+            ipAddress = proxyIpAddress.split(",")[0]; // First IP is the client's real IP
+        }
+        if (!_cacheService.isKeyInCache(ipAddress)) {
+            return "unauth"; // Unauthenticated view
+        } else {
+            String token = _cacheService.getFromCache(ipAddress);
+            String email = _cacheService.getFromCache(token);
+            var user = _userService.getUserByEmail(email);
+            if (user.isPresent()) {
+                return "users"; // Authenticated view
+            }
+        }
+        return "unauth"; // Unauthenticated view
     }
+
 
     // Mapping to return the "roles" view
     @GetMapping("/roles")
-    public String roles() {
-        return "roles"; // Returns the "roles" HTML view
+    public String roles(HttpServletRequest request) {
+        String ipAddress = request.getRemoteAddr();
+        String proxyIpAddress = request.getHeader("X-Forwarded-For");
+        if (proxyIpAddress != null) {
+            ipAddress = proxyIpAddress.split(",")[0]; // First IP is the client's real IP
+        }
+        if (!_cacheService.isKeyInCache(ipAddress)) {
+            return "unauth"; // Unauthenticated view
+        } else {
+            String token = _cacheService.getFromCache(ipAddress);
+            String email = _cacheService.getFromCache(token);
+            var user = _userService.getUserByEmail(email);
+            if (user.isPresent()) {
+                return "roles"; // Authenticated view
+            }
+        }
+        return "unauth"; // Unauthenticated view
     }
 
     // Mapping to return the "userroles" view
     @GetMapping("/userroles")
-    public String userroles() {
-        return "userroles"; // Returns the "userroles" HTML view
+    public String userroles(HttpServletRequest request) {
+        String ipAddress = request.getRemoteAddr();
+        String proxyIpAddress = request.getHeader("X-Forwarded-For");
+        if (proxyIpAddress != null) {
+            ipAddress = proxyIpAddress.split(",")[0]; // First IP is the client's real IP
+        }
+        if (!_cacheService.isKeyInCache(ipAddress)) {
+            return "unauth"; // Unauthenticated view
+        } else {
+            String token = _cacheService.getFromCache(ipAddress);
+            String email = _cacheService.getFromCache(token);
+            var user = _userService.getUserByEmail(email);
+            if (user.isPresent()) {
+                return "userroles"; // Authenticated view
+            }
+        }
+        return "unauth"; // Unauthenticated view
     }
 }

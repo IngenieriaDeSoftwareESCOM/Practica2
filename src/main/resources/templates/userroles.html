@@ -218,6 +218,8 @@
             localStorage.removeItem('jwt');
             sessionStorage.removeItem('jwt');
             window.location.replace('/');
+            fetch('/api/logout').catch(err => showAlert(err));
+            window.location.replace(window.location.origin);
         }
         function showLoginSignupButtons() {
             const authButtons = document.getElementById('authButtons');

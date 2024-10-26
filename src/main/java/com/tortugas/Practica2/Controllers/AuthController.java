@@ -20,6 +20,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
+import jakarta.servlet.http.HttpServletRequest;
+
+
+
 // Mark this class as a REST controller that handles HTTP requests
 @RestController
 @RequestMapping("/") // Set the base URL for this controller
@@ -113,7 +117,7 @@ public class AuthController {
 
     // Endpoint for login, returns a JWT token using POST
     @PostMapping("api/login")
-    public ResponseEntity<String> getToken(@RequestBody User user) {
+    public ResponseEntity<String> getToken(@RequestBody User user, HttpServletRequest request) {
         String newToken = "";
         // Validate that the input user data is not null or empty
         if (user == null || user.getEmail() == null || user.getEmail().isEmpty() || 
@@ -131,6 +135,12 @@ public class AuthController {
                 newToken = _tokenGenerator.generateToken(user.getEmail());
                 // Store the token in the cache
                 _cacheService.addToCache(newToken, user.getEmail());
+                String ipAddress = request.getRemoteAddr();
+                String proxyIpAddress = request.getHeader("X-Forwarded-For");
+                if (proxyIpAddress != null) {
+                    ipAddress = proxyIpAddress.split(",")[0]; // First IP is the client's real IP
+                }
+                _cacheService.addToCache(ipAddress, newToken);
             } else {
                 // Return unauthorized if the password is incorrect
                 return ResponseEntity.status(401).build();
@@ -158,4 +168,22 @@ public class AuthController {
             return ResponseEntity.internalServerError().build();
         }
     }
+    @GetMapping("api/logout")
+    public ResponseEntity logout(HttpServletRequest request) {
+        try{
+            // Check if the token exists in the cache
+            String ipAddress = request.getRemoteAddr();
+            String proxyIpAddress = request.getHeader("X-Forwarded-For");
+            if (proxyIpAddress != null) {
+                ipAddress = proxyIpAddress.split(",")[0]; // First IP is the client's real IP
+            }
+            _cacheService.removeFromCache(ipAddress);
+            // Return OK if the token is valid
+            return ResponseEntity.ok().build();
+        } catch(Exception ex) {
+            // Return internal server error in case of an exception
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+    
 }

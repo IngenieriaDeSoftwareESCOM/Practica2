@@ -28,22 +28,9 @@
 </header>
 <body>
     <div class="container mt-5">
-        <h1>Práctica 2 - Usuarios</h1>
+        <h1>Usuario no autorizado</h1>
         <div id="liveAlertPlaceholder"></div>
-        <div class="table-responsive mt-3">
-            <table class="table table-striped table-hover">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Nombre</th>
-                        <th>Email</th>
-                    </tr>
-                </thead>
-                <tbody id="usersTableBody">
-                    <!-- Aquí se cargarán los usuarios -->
-                </tbody>
-            </table>
-        </div>
+        <img src="/images/noauth.jpg" alt="Sorry you do not have authorization  ">
     </div>
 </body>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
@@ -113,54 +100,10 @@ function logout() {
     localStorage.removeItem('jwt');
     sessionStorage.removeItem('jwt');
     window.location.replace('/');
-    fetch('/api/logout').catch(err => showAlert(err));
-    window.location.replace(window.location.origin);
 }
 
 // Llama a la función para verificar autenticación cuando se carga la página
 document.addEventListener('DOMContentLoaded', checkAuthentication);
 
-// Función para obtener usuarios
-function getUsers() {
-    let token = localStorage.getItem('jwt') || sessionStorage.getItem('jwt');
-    if (!token) {
-        showAlert('No session token found. Please login again.', 'danger');
-        return;
-    }
-    
-    fetch('/api/Get/Users', {
-        method: 'GET',
-        headers: {
-            'Authorization': 'Bearer ' + token,
-            'Content-Type': 'application/json'
-        }
-    })
-    .then(response => {
-        if (!response.ok) {
-            showAlert('Error fetching users. Please try again.', 'danger');
-            throw new Error('Network response was not ok');
-        }
-        return response.json();
-    })
-    .then(data => {
-        const usersTableBody = document.getElementById('usersTableBody');
-        usersTableBody.innerHTML = ''; // Limpiar la tabla
-        data.forEach(user => {
-            const row = document.createElement('tr');
-            row.innerHTML = `
-                <td>${user.id}</td>
-                <td>${user.name}</td>
-                <td>${user.email}</td>
-            `;
-            usersTableBody.appendChild(row);
-        });
-    })
-    .catch(err => {
-        showAlert(err.message, 'danger');
-    });
-}
-
-// Llama a la función para obtener los usuarios cuando se carga la página
-document.addEventListener('DOMContentLoaded', getUsers);
 </script>
 </html>

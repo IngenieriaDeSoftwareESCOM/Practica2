@@ -40,4 +40,11 @@ public class CacheService {
         CaffeineCache caffeineCache = (CaffeineCache) cacheManager.getCache("myCache");
         return caffeineCache.getNativeCache();
     }
+    public void removeFromCache(String key){
+        Cache<Object, Object> cache = getCaffeineCache();
+        if(cache.getIfPresent(key) != null){
+            cache.invalidate(key);
+        }
+        
+    }
 }
