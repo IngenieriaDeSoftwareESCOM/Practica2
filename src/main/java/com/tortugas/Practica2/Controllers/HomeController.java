@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.tortugas.Practica2.Models.User;
+import com.tortugas.Practica2.Models.*;
 import com.tortugas.Practica2.Repositories.*;
 import com.tortugas.Practica2.Services.*;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.ui.Model;
 
 
 
@@ -32,6 +33,7 @@ public class HomeController {
     private UserService _userService;
     private RoleService _roleService;
     private UserRoleService _userRoleService;
+    private ProfilePictureService _pictureService;
     private JwtTokenGeneratorSelf _tokenGenerator;
 
     // Autowired CacheService for caching operations
@@ -39,10 +41,11 @@ public class HomeController {
     private CacheService _cacheService;
 
     // Constructor injection of UserService
-    public HomeController(UserService service, RoleService roleService, UserRoleService userRoleService){
+    public HomeController(UserService service, RoleService roleService, UserRoleService userRoleService, ProfilePictureService pictureService){
         _userService = service;
         _roleService = roleService;
         _userRoleService = userRoleService;
+        _pictureService = pictureService;
     }
 
     // Mapping to return the "index" view
@@ -116,6 +119,36 @@ public class HomeController {
             var user = _userService.getUserByEmail(email);
             if (user.isPresent()) {
                 return "userroles"; // Authenticated view
+            }
+        }
+        return "unauth"; // Unauthenticated view
+    }
+
+    // Mapping to return the "profile image" view
+    @GetMapping("/updateProfilePicture")
+    public String profilePicture(HttpServletRequest request, Model model) {
+        String ipAddress = request.getRemoteAddr();
+        String proxyIpAddress = request.getHeader("X-Forwarded-For");
+        if (proxyIpAddress != null) {
+            ipAddress = proxyIpAddress.split(",")[0]; // First IP is the client's real IP
+        }
+        if (!_cacheService.isKeyInCache(ipAddress)) {
+            return "unauth"; // Unauthenticated view
+        } else {
+            String token = _cacheService.getFromCache(ipAddress);
+            String email = _cacheService.getFromCache(token);
+            var user = _userService.getUserByEmail(email);
+            if (user.isPresent()) {
+                model.addAttribute("user", user.get()); // Add the user object to the model
+                var picture = _pictureService.getprofilePicutreByUserId(user.get().getId());
+                if(picture.isPresent()){
+                    System.out.println(picture.get().getLargeImage());
+                    model.addAttribute("picture", picture.get());
+                }else{
+                    ProfilePicture picture2 = new ProfilePicture();
+                    model.addAttribute("picture", picture2);
+                }
+                return "profile"; // Authenticated view
             }
         }
         return "unauth"; // Unauthenticated view
